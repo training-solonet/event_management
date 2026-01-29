@@ -17,7 +17,8 @@ class HomeController extends Controller
             ->orderBy('date', 'asc')
             ->get();
         
-        return view('peserta.pages.index', compact('events'));
+        $peserta = Participant::all();
+        return view('peserta.pages.index', compact('events', 'peserta'));
     }
 
     public function getEventDetails($id)
