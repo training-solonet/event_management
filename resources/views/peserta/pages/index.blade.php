@@ -74,16 +74,16 @@
                 <div class="flex items-center space-x-6">
                     <a href="#events" class="text-gray-600 hover:text-blue-600 transition font-medium">Events</a>
                     <button id="btnSearchModal" class="text-gray-600 hover:text-blue-600 transition font-medium">
-                        <i class="fas fa-search mr-1"></i> Cari Peserta
+                        <i class="fas fa-search mr-1"></i> Cek Pendaftaran
                     </button>
                     @if(session('admin'))
                         <a href="{{ route('admin.index') }}" class="text-gray-600 hover:text-blue-600 transition font-medium">
                             <i class="fas fa-user-shield mr-1"></i> Admin Panel
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-blue-600 transition font-medium">
+                        {{-- <a href="{{ route('login') }}" class="text-gray-600 hover:text-blue-600 transition font-medium">
                             <i class="fas fa-user mr-1"></i> Login Admin
-                        </a>
+                        </a> --}}
                     @endif
                 </div>
             </div>

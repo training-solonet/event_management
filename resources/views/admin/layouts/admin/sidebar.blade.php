@@ -55,7 +55,7 @@
         <a href="{{ route('admin.payment.index') }}" 
            class="flex items-center px-4 py-3 text-gray-300 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.payment.*') ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg' : 'hover:bg-gray-700 hover:text-white hover:shadow-md' }}">
             <i class="fas fa-money-check-alt mr-3 text-lg w-6 text-center"></i>
-            <span class="font-medium">Pembayaran</span>
+            <span class="font-medium">Metode</span>
         </a>
         
         <!-- Divider -->

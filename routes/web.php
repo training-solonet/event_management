@@ -19,6 +19,9 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
     // Admin Dashboard
     Route::get('/', [AdminController::class, 'index'])->name('index');
     
+    // ROUTE untuk mendapatkan data peserta
+    Route::get('/participant/{id}', [AdminController::class, 'getParticipant'])->name('participant.show');
+    
     // CUSTOM ROUTES 
     Route::post('/peserta/{id}/update-status', [ParticipantController::class, 'update'])->name('peserta.update-status');
     Route::post('/peserta/{id}/send-email', [ParticipantController::class, 'sendEmail'])->name('peserta.send-email');
@@ -36,4 +39,8 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-]);
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view("dashboard");
+    })->name('dashboard');
+});

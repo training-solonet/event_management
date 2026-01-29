@@ -329,7 +329,7 @@
                         </div>
                     </a>
                     
-                    <!-- Kelola Pembayaran (BARU) -->
+                    <!-- Kelola Pembayaran -->
                     <a href="{{ route('admin.payment.index') }}" 
                        class="flex items-center p-4 rounded-lg bg-gradient-to-r from-indigo-50 to-white border border-indigo-100 hover:from-indigo-100 hover:to-white hover:shadow-md transition-all duration-200 group">
                         <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
@@ -344,8 +344,8 @@
                         </div>
                     </a>
                     
-                    <!-- Download Laporan (Client-side Export) -->
-                    <button onclick="openExportModal()" 
+                    <!-- Download Laporan (SIMPLE VERSION) -->
+                    <button onclick="exportReport()" 
                             class="flex items-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-white border border-blue-100 hover:from-blue-100 hover:to-white hover:shadow-md transition-all duration-200 group">
                         <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-200">
                             <i class="fas fa-download text-white text-xl"></i>
@@ -393,7 +393,6 @@
             </div>
             <form id="verificationForm">
                 @csrf
-                @method('PUT')
                 <input type="hidden" id="verificationParticipantId" name="participant_id">
                 <div class="mb-6">
                     <div id="participantInfo" class="bg-gray-50 p-4 rounded-lg mb-4">
@@ -427,105 +426,33 @@
     </div>
 </div>
 
-<!-- Export Modal (BARU - Client-side) -->
+<!-- Simple Export Modal -->
 <div id="exportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Export Data</h3>
-                <button onclick="closeExportModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="space-y-4 mb-6">
-                <!-- Format Export -->
-                <div>
-                    <label class="block text-gray-700 mb-2">Format Export</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center">
-                            <input type="radio" name="exportFormat" value="excel" checked class="mr-2">
-                            <span class="text-gray-700">
-                                <i class="fas fa-file-excel text-green-500 mr-1"></i> Excel
-                            </span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="exportFormat" value="pdf" class="mr-2">
-                            <span class="text-gray-700">
-                                <i class="fas fa-file-pdf text-red-500 mr-1"></i> PDF
-                            </span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Tipe Data -->
-                <div>
-                    <label class="block text-gray-700 mb-2">Tipe Data</label>
-                    <select id="exportType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="all">Semua Data</option>
-                        <option value="pending">Pending Only</option>
-                        <option value="verified">Verified Only</option>
-                        <option value="paid">Paid Only</option>
-                    </select>
-                </div>
-                
-                <!-- Tanggal -->
-                <div>
-                    <label class="block text-gray-700 mb-2">Rentang Tanggal (Opsional)</label>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <input type="date" id="exportStartDate" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Tanggal Mulai">
-                        </div>
-                        <div>
-                            <input type="date" id="exportEndDate" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                   placeholder="Tanggal Selesai">
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Kosongkan untuk semua tanggal</p>
-                </div>
-                
-                <!-- Data Saat Ini -->
-                <div class="bg-blue-50 p-4 rounded-lg">
-                    <div class="flex items-center">
-                        <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                        <span class="text-sm text-gray-700">Export akan menggunakan data yang tampil di dashboard</span>
-                    </div>
-                    <div class="mt-2 text-xs text-gray-600">
-                        <p>• Total Peserta: <span id="exportTotalCount">{{ $stats['total_participants'] }}</span></p>
-                        <p>• Pendaftaran Terbaru: 10 data</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flex justify-end space-x-4">
-                <button type="button" onclick="closeExportModal()" 
-                        class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                    Batal
-                </button>
-                <button type="button" onclick="handleExport()" 
-                        class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 font-semibold">
-                    <i class="fas fa-download mr-2"></i> Export
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Export Success Modal -->
-<div id="exportSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
     <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full">
         <div class="p-6 text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <i class="fas fa-check text-green-600 text-2xl"></i>
+            <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-file-export text-blue-600 text-2xl"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Export Berhasil!</h3>
-            <p class="text-gray-600 mb-6" id="exportSuccessMessage">Data telah berhasil diunduh.</p>
-            <button onclick="closeExportSuccessModal()" 
-                    class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 font-semibold w-full">
-                Tutup
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Export Data</h3>
+            <p class="text-gray-600 mb-6">Pilih format export:</p>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <button onclick="exportToExcel()" 
+                        class="px-4 py-3 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 text-green-700 rounded-lg hover:from-green-100 hover:to-green-200 transition-all duration-200">
+                    <i class="fas fa-file-excel text-lg mb-1"></i><br>
+                    <span class="text-sm font-medium">Excel</span>
+                </button>
+                <button onclick="exportToPDF()" 
+                        class="px-4 py-3 bg-gradient-to-r from-red-50 to-red-100 border border-red-200 text-red-700 rounded-lg hover:from-red-100 hover:to-red-200 transition-all duration-200">
+                    <i class="fas fa-file-pdf text-lg mb-1"></i><br>
+                    <span class="text-sm font-medium">PDF</span>
+                </button>
+            </div>
+            <div class="text-xs text-gray-500 mb-4">
+                <p>Data akan diexport berdasarkan data yang tampil di dashboard.</p>
+            </div>
+            <button onclick="closeExportModal()" 
+                    class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 w-full">
+                Batal
             </button>
         </div>
     </div>
@@ -550,19 +477,12 @@
 @endpush
 
 @push('scripts')
-<!-- SheetJS for Excel Export (CDN) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<!-- jsPDF for PDF Export (CDN) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
 <script>
     // Set CSRF token
     // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     
     // Deklarasi variabel global
     let currentParticipantId = null;
-    let allParticipantsData = []; // Untuk menyimpan data peserta
     
     // Initialize dashboard
     document.addEventListener('DOMContentLoaded', function() {
@@ -571,9 +491,6 @@
         if (verificationForm) {
             verificationForm.addEventListener('submit', handleVerificationSubmit);
         }
-        
-        // Load all participants data for export
-        loadAllParticipantsForExport();
         
         // Animate stats cards on load
         setTimeout(() => {
@@ -586,32 +503,8 @@
         startAutoRefresh();
     });
     
-    // Load all participants data for export
-    async function loadAllParticipantsForExport() {
-        try {
-            const response = await fetch('{{ route("admin.peserta.index") }}?format=json&limit=all', {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.text();
-                // Parse data jika ada
-                if (data) {
-                    allParticipantsData = JSON.parse(data);
-                }
-            }
-        } catch (error) {
-            console.error('Error loading participants data for export:', error);
-            // Fallback: Use current dashboard data
-            allParticipantsData = @json($recentRegistrations);
-        }
-    }
-    
-    // Export Modal Functions
-    function openExportModal() {
+    // Simple Export Functions
+    function exportReport() {
         document.getElementById('exportModal').classList.remove('hidden');
         document.getElementById('exportModal').classList.add('flex');
     }
@@ -621,244 +514,466 @@
         document.getElementById('exportModal').classList.remove('flex');
     }
     
-    function openExportSuccessModal(message = 'Data telah berhasil diunduh.') {
-        document.getElementById('exportSuccessMessage').textContent = message;
-        document.getElementById('exportSuccessModal').classList.remove('hidden');
-        document.getElementById('exportSuccessModal').classList.add('flex');
-    }
-    
-    function closeExportSuccessModal() {
-        document.getElementById('exportSuccessModal').classList.add('hidden');
-        document.getElementById('exportSuccessModal').classList.remove('flex');
-    }
-    
-    // Handle export button click
-    async function handleExport() {
-        const format = document.querySelector('input[name="exportFormat"]:checked').value;
-        const type = document.getElementById('exportType').value;
-        const startDate = document.getElementById('exportStartDate').value;
-        const endDate = document.getElementById('exportEndDate').value;
-        
-        showLoading('Mengexport data...');
-        closeExportModal();
-        
+    async function exportToExcel() {
         try {
-            // Get data untuk export
-            const data = await getExportData(type, startDate, endDate);
+            showLoading('Menyiapkan file Excel...');
             
-            if (format === 'excel') {
-                await exportToExcel(data);
-            } else if (format === 'pdf') {
-                await exportToPDF(data);
-            }
+            // Ambil data peserta dari dashboard
+            const participants = @json($recentRegistrations);
+            
+            // Buat header CSV
+            let csvContent = "No,Kode Transaksi,Nama Lengkap,Email,Telepon,Event,Status,Tanggal Daftar,Catatan\n";
+            
+            // Tambahkan data
+            participants.forEach((participant, index) => {
+                const row = [
+                    index + 1,
+                    `"${participant.transaction_code}"`,
+                    `"${participant.full_name}"`,
+                    `"${participant.email}"`,
+                    `"${participant.phone || '-'}"`,
+                    `"${participant.event ? participant.event.name : '-'}"`,
+                    `"${getStatusText(participant.payment_status)}"`,
+                    `"${new Date(participant.created_at).toLocaleDateString('id-ID')}"`,
+                    `"${participant.notes || '-'}"`
+                ];
+                csvContent += row.join(',') + "\n";
+            });
+            
+            // Buat blob dan download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", `data-peserta-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             
             hideLoading();
-            openExportSuccessModal();
+            closeExportModal();
+            showToast('File Excel berhasil diunduh!', 'Berhasil!');
             
         } catch (error) {
             hideLoading();
-            console.error('Error exporting data:', error);
-            showToast('Gagal mengexport data: ' + error.message, 'Error!', 'error');
+            console.error('Error exporting to Excel:', error);
+            showToast('Gagal mengexport data', 'Error!', 'error');
         }
     }
     
-    // Get data untuk export
-    async function getExportData(type = 'all', startDate = null, endDate = null) {
+    async function exportToPDF() {
         try {
-            // Coba ambil data dari server
-            const response = await fetch('{{ route("admin.peserta.index") }}?format=json', {
+            showLoading('Menyiapkan file PDF...');
+            
+            // Ambil data peserta dari dashboard
+            const participants = @json($recentRegistrations);
+            
+            // Buat konten HTML sederhana
+            let htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Data Peserta</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 8px; text-align: left; }
+                        td { border: 1px solid #dee2e6; padding: 8px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Data Peserta</h1>
+                    <p>Tanggal: ${new Date().toLocaleDateString('id-ID')}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Event</th>
+                                <th>Status</th>
+                                <th>Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            participants.forEach((participant, index) => {
+                htmlContent += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${participant.full_name}</td>
+                        <td>${participant.email}</td>
+                        <td>${participant.event ? participant.event.name : '-'}</td>
+                        <td>${getStatusText(participant.payment_status)}</td>
+                        <td>${new Date(participant.created_at).toLocaleDateString('id-ID')}</td>
+                    </tr>
+                `;
+            });
+            
+            htmlContent += `
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `;
+            
+            // Buat blob dan download
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", `data-peserta-${new Date().toISOString().split('T')[0]}.html`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            hideLoading();
+            closeExportModal();
+            showToast('File PDF berhasil diunduh!', 'Berhasil!');
+            
+        } catch (error) {
+            hideLoading();
+            console.error('Error exporting to PDF:', error);
+            showToast('Gagal mengexport data', 'Error!', 'error');
+        }
+    }
+    
+    // View participant detail - DIPERBAIKI: menggunakan route baru
+    async function viewParticipantDetail(participantId) {
+        try {
+            showLoading('Memuat detail peserta...');
+            
+            // Gunakan route baru yang sudah dibuat
+            const response = await fetch(`{{ url('admin/participant') }}/${participantId}`, {
                 headers: {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': csrfToken
                 }
             });
             
-            if (response.ok) {
-                const text = await response.text();
-                let data = [];
-                
-                if (text) {
-                    try {
-                        data = JSON.parse(text);
-                    } catch (e) {
-                        console.warn('Failed to parse JSON, using fallback data');
-                        data = allParticipantsData;
-                    }
-                } else {
-                    data = allParticipantsData;
-                }
-                
-                // Filter berdasarkan type
-                if (type !== 'all') {
-                    data = data.filter(participant => participant.payment_status === type);
-                }
-                
-                // Filter berdasarkan tanggal
-                if (startDate && endDate) {
-                    const start = new Date(startDate);
-                    const end = new Date(endDate);
-                    end.setHours(23, 59, 59, 999); // Akhir hari
-                    
-                    data = data.filter(participant => {
-                        const participantDate = new Date(participant.created_at);
-                        return participantDate >= start && participantDate <= end;
-                    });
-                }
-                
-                return data;
+            const data = await response.json();
+            
+            hideLoading();
+            
+            if (data.success) {
+                displayParticipantDetail(data.data);
             } else {
-                // Jika gagal, gunakan data dari dashboard
-                return filterDashboardData(type, startDate, endDate);
+                showToast('Gagal memuat detail peserta', 'Error!', 'error');
+            }
+            
+        } catch (error) {
+            hideLoading();
+            console.error('Error loading participant detail:', error);
+            showToast('Gagal memuat detail peserta', 'Error!', 'error');
+        }
+    }
+    
+    // Show verification modal - DIPERBAIKI: menggunakan route baru
+    async function showVerificationModal(participantId) {
+        currentParticipantId = participantId;
+        
+        try {
+            // Gunakan route baru yang sudah dibuat
+            const response = await fetch(`{{ url('admin/participant') }}/${participantId}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                const participant = data.data;
+                
+                let proofInfo = '';
+                if (participant.payment_proof_url) {
+                    proofInfo = `
+                        <div class="mt-2">
+                            <strong>Bukti Transfer:</strong><br>
+                            <div class="mt-2">
+                                <a href="${participant.payment_proof_url}" target="_blank" 
+                                   class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100">
+                                    <i class="fas fa-eye mr-2"></i> Lihat Bukti Transfer
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('participantInfo').innerHTML = `
+                    <h4 class="font-semibold mb-2">Detail Peserta:</h4>
+                    <p><strong>Nama:</strong> ${participant.full_name}</p>
+                    <p><strong>Email:</strong> ${participant.email}</p>
+                    <p><strong>Event:</strong> ${participant.event ? participant.event.name : 'Event tidak ditemukan'}</p>
+                    <p><strong>Jumlah:</strong> ${participant.event ? 'Rp ' + participant.event.price.toLocaleString() : '-'}</p>
+                    <p><strong>Kode Transaksi:</strong> <code>${participant.transaction_code}</code></p>
+                    ${proofInfo}
+                `;
+                
+                document.getElementById('verificationParticipantId').value = participantId;
+                document.getElementById('paymentStatus').value = participant.payment_status;
+                document.getElementById('verificationNotes').value = participant.notes || '';
+                
+                document.getElementById('verificationModal').classList.remove('hidden');
+                document.getElementById('verificationModal').classList.add('flex');
             }
         } catch (error) {
-            console.error('Error fetching export data:', error);
-            return filterDashboardData(type, startDate, endDate);
+            console.error('Error opening verification modal:', error);
+            showToast('Gagal membuka modal verifikasi', 'error');
         }
     }
     
-    // Filter data dari dashboard
-    function filterDashboardData(type, startDate, endDate) {
-        let data = @json($recentRegistrations);
+    // Handle verification form submission - DIPERBAIKI: menggunakan route yang sudah ada
+    async function handleVerificationSubmit(event) {
+        event.preventDefault();
         
-        // Filter berdasarkan type
-        if (type !== 'all') {
-            data = data.filter(participant => participant.payment_status === type);
-        }
+        const participantId = document.getElementById('verificationParticipantId').value;
+        const paymentStatus = document.getElementById('paymentStatus').value;
+        const notes = document.getElementById('verificationNotes').value;
         
-        // Filter berdasarkan tanggal
-        if (startDate && endDate) {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            end.setHours(23, 59, 59, 999);
+        try {
+            showLoading('Memperbarui status...');
             
-            data = data.filter(participant => {
-                const participantDate = new Date(participant.created_at);
-                return participantDate >= start && participantDate <= end;
+            // Gunakan route yang sudah ada: admin.peserta.update-status
+            const response = await fetch(`{{ url('admin/peserta') }}/${participantId}/update-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    payment_status: paymentStatus,
+                    notes: notes
+                })
             });
+            
+            const data = await response.json();
+            
+            hideLoading();
+            
+            if (data.success) {
+                showToast('Status pembayaran berhasil diperbarui!', 'Berhasil!');
+                closeVerificationModal();
+                
+                // Refresh semua data setelah update
+                updateDashboardStats();
+                updateRecentRegistrations();
+                
+                // Jika sedang melihat detail peserta, refresh juga
+                if (document.getElementById('participantModal').classList.contains('flex')) {
+                    viewParticipantDetail(participantId);
+                }
+            } else {
+                showToast(data.message || 'Gagal memperbarui status', 'error');
+            }
+        } catch (error) {
+            hideLoading();
+            console.error('Error updating verification:', error);
+            showToast('Gagal memperbarui status', 'error');
+        }
+    }
+    
+    // Fungsi untuk menampilkan detail peserta
+    function displayParticipantDetail(participant) {
+        const statusClass = getStatusClass(participant.payment_status);
+        const statusText = getStatusText(participant.payment_status);
+        
+        // Format tanggal
+        const registrationDate = new Date(participant.created_at);
+        const formattedDate = registrationDate.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        let proofHtml = '';
+        if (participant.payment_proof_url) {
+            proofHtml = `
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <h4 class="font-semibold text-gray-700 mb-3">Bukti Transfer</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-full max-w-md mb-3 bg-gray-100 rounded-lg flex items-center justify-center min-h-[200px]">
+                                <div class="w-full text-center">
+                                    <img src="${participant.payment_proof_url}" 
+                                         alt="Bukti Transfer ${participant.full_name}"
+                                         class="w-full h-auto rounded-lg object-contain max-h-96 mx-auto">
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3 justify-center mt-3">
+                                <button onclick="window.open('${participant.payment_proof_url}', '_blank')" 
+                                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow">
+                                    <i class="fas fa-external-link-alt mr-2"></i>
+                                    Buka di Tab Baru
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
         
-        return data;
+        document.getElementById('participantDetailContent').innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-700 mb-3">Informasi Pribadi</h4>
+                    <div class="space-y-2">
+                        <p><strong class="text-gray-700">Nama Lengkap:</strong><br>${participant.full_name}</p>
+                        <p><strong class="text-gray-700">Email:</strong><br>${participant.email}</p>
+                        <p><strong class="text-gray-700">Telepon:</strong><br>${participant.phone || '-'}</p>
+                        <p><strong class="text-gray-700">NIK:</strong><br>${participant.nik || '-'}</p>
+                        <p><strong class="text-gray-700">Jenis Kelamin:</strong><br>${participant.gender || '-'}</p>
+                        ${participant.address ? `<p><strong class="text-gray-700">Alamat:</strong><br>${participant.address}</p>` : ''}
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-700 mb-3">Informasi Pendaftaran</h4>
+                    <div class="space-y-2">
+                        <p><strong class="text-gray-700">Event:</strong><br>${participant.event ? participant.event.name : 'Event tidak ditemukan'}</p>
+                        <p><strong class="text-gray-700">Kode Transaksi:</strong><br><code class="bg-blue-50 px-2 py-1 rounded">${participant.transaction_code}</code></p>
+                        <p><strong class="text-gray-700">Status Pembayaran:</strong><br>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass.badge} mt-1">
+                                <i class="${getStatusIcon(participant.payment_status)} mr-1.5"></i>
+                                ${statusText}
+                            </span>
+                        </p>
+                        <p><strong class="text-gray-700">Tanggal Daftar:</strong><br>${formattedDate}</p>
+                        ${participant.event && participant.event.price ? 
+                            `<p><strong class="text-gray-700">Biaya Event:</strong><br>Rp ${participant.event.price.toLocaleString('id-ID')}</p>` 
+                            : ''}
+                        ${participant.notes ? `<p><strong class="text-gray-700">Catatan:</strong><br>${participant.notes}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+            
+            ${proofHtml}
+            
+            <div class="mt-6 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="text-sm text-gray-500">
+                    <p>ID Peserta: <span class="font-mono">${participant.id}</span></p>
+                    <p>Terakhir Diperbarui: ${new Date(participant.updated_at).toLocaleDateString('id-ID')}</p>
+                </div>
+                <div class="flex space-x-4">
+                    <button onclick="openVerificationModal(${participant.id})" 
+                            class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow">
+                        <i class="fas fa-edit mr-2"></i> Ubah Status
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('participantModal').classList.remove('hidden');
+        document.getElementById('participantModal').classList.add('flex');
     }
     
-    // Export ke Excel menggunakan SheetJS
-    async function exportToExcel(data) {
-        // Format data untuk Excel
-        const excelData = [
-            ['No', 'Kode Transaksi', 'Nama Lengkap', 'Email', 'Telepon', 'Event', 'Status', 'Tanggal Daftar', 'Catatan']
-        ];
-        
-        data.forEach((participant, index) => {
-            excelData.push([
-                index + 1,
-                participant.transaction_code,
-                participant.full_name,
-                participant.email,
-                participant.phone || '-',
-                participant.event ? participant.event.name : '-',
-                getStatusTextForExport(participant.payment_status),
-                new Date(participant.created_at).toLocaleDateString('id-ID'),
-                participant.notes || '-'
-            ]);
-        });
-        
-        // Buat workbook
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(excelData);
-        
-        // Atur lebar kolom
-        const colWidths = [
-            { wch: 5 },   // No
-            { wch: 20 },  // Kode Transaksi
-            { wch: 30 },  // Nama
-            { wch: 25 },  // Email
-            { wch: 15 },  // Telepon
-            { wch: 25 },  // Event
-            { wch: 15 },  // Status
-            { wch: 15 },  // Tanggal
-            { wch: 30 }   // Catatan
-        ];
-        ws['!cols'] = colWidths;
-        
-        XLSX.utils.book_append_sheet(wb, ws, 'Data Peserta');
-        
-        // Export ke file
-        const fileName = `data-peserta-${new Date().toISOString().split('T')[0]}.xlsx`;
-        XLSX.writeFile(wb, fileName);
-    }
-    
-    // Export ke PDF menggunakan jsPDF
-    async function exportToPDF(data) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        // Judul
-        doc.setFontSize(18);
-        doc.text('Data Peserta', 14, 22);
-        doc.setFontSize(11);
-        doc.text(`Dicetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 30);
-        doc.text(`Total: ${data.length} peserta`, 14, 37);
-        
-        // Tabel
-        const tableColumn = ["No", "Nama", "Email", "Event", "Status", "Tanggal"];
-        const tableRows = [];
-        
-        data.forEach((participant, index) => {
-            const row = [
-                index + 1,
-                participant.full_name,
-                participant.email,
-                participant.event ? participant.event.name : '-',
-                getStatusTextForExport(participant.payment_status),
-                new Date(participant.created_at).toLocaleDateString('id-ID')
-            ];
-            tableRows.push(row);
-        });
-        
-        // Buat tabel
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 45,
-            theme: 'grid',
-            styles: { fontSize: 9 },
-            headStyles: { fillColor: [41, 128, 185], textColor: 255 }
-        });
-        
-        // Footer
-        const pageCount = doc.internal.getNumberOfPages();
-        for(let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.text(
-                `Halaman ${i} dari ${pageCount}`,
-                doc.internal.pageSize.width / 2,
-                doc.internal.pageSize.height - 10,
-                { align: 'center' }
-            );
+    // Helper functions untuk status
+    function getStatusClass(status) {
+        switch(status) {
+            case 'verified':
+                return {
+                    bg: 'bg-gradient-to-r from-green-100 to-green-200',
+                    text: 'text-green-600',
+                    badge: 'bg-gradient-to-r from-green-100 to-green-200 text-green-800'
+                };
+            case 'paid':
+                return {
+                    bg: 'bg-gradient-to-r from-blue-100 to-blue-200',
+                    text: 'text-blue-600',
+                    badge: 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'
+                };
+            default:
+                return {
+                    bg: 'bg-gradient-to-r from-yellow-100 to-yellow-200',
+                    text: 'text-yellow-600',
+                    badge: 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800'
+                };
         }
+    }
+    
+    function getStatusText(status) {
+        switch(status) {
+            case 'verified': return 'Terverifikasi';
+            case 'paid': return 'Sudah Bayar';
+            default: return 'Menunggu';
+        }
+    }
+    
+    function getStatusIcon(status) {
+        switch(status) {
+            case 'verified': return 'fas fa-check-circle';
+            case 'paid': return 'fas fa-money-bill-wave';
+            default: return 'fas fa-clock';
+        }
+    }
+    
+    // Modal control functions
+    function closeParticipantModal() {
+        document.getElementById('participantModal').classList.add('hidden');
+        document.getElementById('participantModal').classList.remove('flex');
+    }
+    
+    function closeVerificationModal() {
+        document.getElementById('verificationModal').classList.add('hidden');
+        document.getElementById('verificationModal').classList.remove('flex');
+        currentParticipantId = null;
+    }
+    
+    // Utility functions
+    function showLoading(message = 'Memuat...') {
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'globalLoading';
+        loadingDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        loadingDiv.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow-xl">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p class="text-gray-700">${message}</p>
+            </div>
+        `;
+        document.body.appendChild(loadingDiv);
+    }
+    
+    function hideLoading() {
+        const loadingDiv = document.getElementById('globalLoading');
+        if (loadingDiv) {
+            loadingDiv.remove();
+        }
+    }
+    
+    function showToast(message, title = 'Sukses', type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-transform duration-300 translate-y-0 ${
+            type === 'success' ? 'bg-green-500 text-white' : 
+            type === 'error' ? 'bg-red-500 text-white' : 
+            'bg-blue-500 text-white'
+        }`;
+        toast.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} mr-3"></i>
+                <div>
+                    <p class="font-semibold">${title}</p>
+                    <p>${message}</p>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(toast);
         
-        // Simpan file
-        const fileName = `data-peserta-${new Date().toISOString().split('T')[0]}.pdf`;
-        doc.save(fileName);
+        setTimeout(() => {
+            toast.classList.add('translate-y-full');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
-    
-    // Helper untuk status export
-    function getStatusTextForExport(status) {
-        const statusMap = {
-            'pending': 'Menunggu',
-            'paid': 'Sudah Bayar',
-            'verified': 'Terverifikasi'
-        };
-        return statusMap[status] || status;
-    }
-    
-    // Fungsi exportReport lama untuk kompatibilitas
-    async function exportReport() {
-        openExportModal();
-    }
-    
-    // ... (sisa kode JavaScript dari sebelumnya TIDAK BERUBAH) ...
-    // Semua fungsi lain tetap sama seperti sebelumnya
     
     // Auto refresh untuk data realtime
     function startAutoRefresh() {
@@ -867,23 +982,6 @@
         
         // Refresh recent registrations setiap 45 detik
         setInterval(updateRecentRegistrations, 45000);
-    }
-    
-    // Fungsi yang dipanggil oleh tombol
-    function loadRecentRegistrations() {
-        updateRecentRegistrations();
-    }
-    
-    async function openVerificationModal(participantId) {
-        showVerificationModal(participantId);
-    }
-    
-    function createEvent() {
-        window.location.href = '{{ route("admin.event.create") }}';
-    }
-    
-    function viewPendingPayments() {
-        window.location.href = '{{ route("admin.peserta.index") }}?status=pending';
     }
     
     // Update dashboard statistics
@@ -924,12 +1022,6 @@
                     const pendingBadge = document.getElementById('pendingBadge');
                     if (pendingBadge) {
                         pendingBadge.textContent = `${stats.pending_payments} pending`;
-                    }
-                    
-                    // Update export total count
-                    const exportTotal = document.getElementById('exportTotalCount');
-                    if (exportTotal) {
-                        exportTotal.textContent = stats.total_participants;
                     }
                 }
             }
@@ -1072,355 +1164,21 @@
         }, duration / steps);
     }
     
-    // View participant detail dengan bukti transfer yang benar
-    async function viewParticipantDetail(participantId) {
-        try {
-            showLoading('Memuat detail peserta...');
-            
-            // Ambil data peserta dari server menggunakan endpoint yang sudah ada
-            const response = await fetch(`/admin/admin/${participantId}/edit`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            });
-            
-            const data = await response.json();
-            
-            hideLoading();
-            
-            if (data.success) {
-                displayParticipantDetail(data.data);
-            } else {
-                showToast('Gagal memuat detail peserta', 'Error!', 'error');
-            }
-            
-        } catch (error) {
-            hideLoading();
-            console.error('Error loading participant detail:', error);
-            showToast('Gagal memuat detail peserta', 'Error!', 'error');
-        }
+    // Fungsi yang dipanggil oleh tombol
+    function loadRecentRegistrations() {
+        updateRecentRegistrations();
     }
     
-    // Fungsi untuk menampilkan detail peserta
-    function displayParticipantDetail(participant) {
-        const statusClass = getStatusClass(participant.payment_status);
-        const statusText = getStatusText(participant.payment_status);
-        
-        // Format tanggal
-        const registrationDate = new Date(participant.created_at);
-        const formattedDate = registrationDate.toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
-        let proofHtml = '';
-        if (participant.payment_proof_url) {
-            const fileName = participant.payment_proof.split('/').pop() || 'bukti-transfer.jpg';
-            
-            proofHtml = `
-                <div class="mt-4 pt-4 border-t border-gray-200">
-                    <h4 class="font-semibold text-gray-700 mb-3">Bukti Transfer</h4>
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <div class="flex flex-col items-center">
-                            <div class="relative w-full max-w-md mb-3 bg-gray-100 rounded-lg flex items-center justify-center min-h-[200px]">
-                                <div id="proofImageContainer" class="w-full text-center">
-                                    <div id="imageLoading" class="absolute inset-0 flex items-center justify-center">
-                                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                                    </div>
-                                    <img src="${participant.payment_proof_url}" 
-                                         alt="Bukti Transfer ${participant.full_name}"
-                                         class="w-full h-auto rounded-lg object-contain max-h-96 mx-auto"
-                                         id="proofImage"
-                                         onload="document.getElementById('imageLoading').style.display='none';"
-                                         onerror="handleProofImageError(this, '${participant.payment_proof_url}', ${participant.id})">
-                                    <div id="proofImageError" class="hidden text-center p-4">
-                                        <i class="fas fa-exclamation-triangle text-2xl text-yellow-500 mb-2"></i>
-                                        <p class="text-gray-700">Gagal memuat gambar bukti transfer.</p>
-                                        <div class="mt-3 space-y-2">
-                                            <button onclick="retryLoadProofImage('${participant.payment_proof_url}', ${participant.id})" 
-                                                    class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
-                                                Coba Lagi
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-wrap gap-3 justify-center mt-3">
-                                <button onclick="window.open('${participant.payment_proof_url}', '_blank')" 
-                                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow">
-                                    <i class="fas fa-external-link-alt mr-2"></i>
-                                    Buka di Tab Baru
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        document.getElementById('participantDetailContent').innerHTML = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-semibold text-gray-700 mb-3">Informasi Pribadi</h4>
-                    <div class="space-y-2">
-                        <p><strong class="text-gray-700">Nama Lengkap:</strong><br>${participant.full_name}</p>
-                        <p><strong class="text-gray-700">Email:</strong><br>${participant.email}</p>
-                        <p><strong class="text-gray-700">Telepon:</strong><br>${participant.phone || '-'}</p>
-                        <p><strong class="text-gray-700">NIK:</strong><br>${participant.nik || '-'}</p>
-                        <p><strong class="text-gray-700">Jenis Kelamin:</strong><br>${participant.gender || '-'}</p>
-                        ${participant.address ? `<p><strong class="text-gray-700">Alamat:</strong><br>${participant.address}</p>` : ''}
-                    </div>
-                </div>
-                
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-semibold text-gray-700 mb-3">Informasi Pendaftaran</h4>
-                    <div class="space-y-2">
-                        <p><strong class="text-gray-700">Event:</strong><br>${participant.event ? participant.event.name : 'Event tidak ditemukan'}</p>
-                        <p><strong class="text-gray-700">Kode Transaksi:</strong><br><code class="bg-blue-50 px-2 py-1 rounded">${participant.transaction_code}</code></p>
-                        <p><strong class="text-gray-700">Status Pembayaran:</strong><br>
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass.badge} mt-1">
-                                <i class="${getStatusIcon(participant.payment_status)} mr-1.5"></i>
-                                ${statusText}
-                            </span>
-                        </p>
-                        <p><strong class="text-gray-700">Tanggal Daftar:</strong><br>${formattedDate}</p>
-                        ${participant.event && participant.event.price ? 
-                            `<p><strong class="text-gray-700">Biaya Event:</strong><br>Rp ${participant.event.price.toLocaleString('id-ID')}</p>` 
-                            : ''}
-                        ${participant.notes ? `<p><strong class="text-gray-700">Catatan:</strong><br>${participant.notes}</p>` : ''}
-                    </div>
-                </div>
-            </div>
-            
-            ${proofHtml}
-            
-            <div class="mt-6 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div class="text-sm text-gray-500">
-                    <p>ID Peserta: <span class="font-mono">${participant.id}</span></p>
-                    <p>Terakhir Diperbarui: ${new Date(participant.updated_at).toLocaleDateString('id-ID')}</p>
-                </div>
-                <div class="flex space-x-4">
-                    <button onclick="openVerificationModal(${participant.id})" 
-                            class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow">
-                        <i class="fas fa-edit mr-2"></i> Ubah Status
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        document.getElementById('participantModal').classList.remove('hidden');
-        document.getElementById('participantModal').classList.add('flex');
+    function openVerificationModal(participantId) {
+        showVerificationModal(participantId);
     }
     
-    // Show verification modal
-    async function showVerificationModal(participantId) {
-        currentParticipantId = participantId;
-        
-        try {
-            // Ambil data peserta
-            const response = await fetch(`/admin/admin/${participantId}/edit`, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                const participant = data.data;
-                
-                let proofInfo = '';
-                if (participant.payment_proof_url) {
-                    proofInfo = `
-                        <div class="mt-2">
-                            <strong>Bukti Transfer:</strong><br>
-                            <div class="mt-2">
-                                <a href="${participant.payment_proof_url}" target="_blank" 
-                                   class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100">
-                                    <i class="fas fa-eye mr-2"></i> Lihat Bukti Transfer
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                document.getElementById('participantInfo').innerHTML = `
-                    <h4 class="font-semibold mb-2">Detail Peserta:</h4>
-                    <p><strong>Nama:</strong> ${participant.full_name}</p>
-                    <p><strong>Email:</strong> ${participant.email}</p>
-                    <p><strong>Event:</strong> ${participant.event ? participant.event.name : 'Event tidak ditemukan'}</p>
-                    <p><strong>Jumlah:</strong> ${participant.event ? 'Rp ' + participant.event.price.toLocaleString() : '-'}</p>
-                    <p><strong>Kode Transaksi:</strong> <code>${participant.transaction_code}</code></p>
-                    ${proofInfo}
-                `;
-                
-                document.getElementById('verificationParticipantId').value = participantId;
-                document.getElementById('paymentStatus').value = participant.payment_status;
-                document.getElementById('verificationNotes').value = participant.notes || '';
-                
-                document.getElementById('verificationModal').classList.remove('hidden');
-                document.getElementById('verificationModal').classList.add('flex');
-            }
-        } catch (error) {
-            console.error('Error opening verification modal:', error);
-            showToast('Gagal membuka modal verifikasi', 'error');
-        }
+    function createEvent() {
+        window.location.href = '{{ route("admin.event.create") }}';
     }
     
-    // Handle verification form submission
-    async function handleVerificationSubmit(event) {
-        event.preventDefault();
-        
-        const participantId = document.getElementById('verificationParticipantId').value;
-        const paymentStatus = document.getElementById('paymentStatus').value;
-        const notes = document.getElementById('verificationNotes').value;
-        
-        try {
-            showLoading('Memperbarui status...');
-            
-            // Kirim request PUT ke endpoint update peserta
-            const response = await fetch(`/admin/admin/${participantId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({
-                    payment_status: paymentStatus,
-                    notes: notes,
-                    _method: 'PUT'
-                })
-            });
-            
-            const data = await response.json();
-            
-            hideLoading();
-            
-            if (data.success) {
-                showToast('Status pembayaran berhasil diperbarui!', 'Berhasil!');
-                closeVerificationModal();
-                
-                // Refresh semua data setelah update
-                updateDashboardStats();
-                updateRecentRegistrations();
-                
-                // Jika sedang melihat detail peserta, refresh juga
-                if (document.getElementById('participantModal').classList.contains('flex')) {
-                    viewParticipantDetail(participantId);
-                }
-            } else {
-                showToast(data.message || 'Gagal memperbarui status', 'error');
-            }
-        } catch (error) {
-            hideLoading();
-            console.error('Error updating verification:', error);
-            showToast('Gagal memperbarui status', 'error');
-        }
-    }
-    
-    // Helper functions untuk status
-    function getStatusClass(status) {
-        switch(status) {
-            case 'verified':
-                return {
-                    bg: 'bg-gradient-to-r from-green-100 to-green-200',
-                    text: 'text-green-600',
-                    badge: 'bg-gradient-to-r from-green-100 to-green-200 text-green-800'
-                };
-            case 'paid':
-                return {
-                    bg: 'bg-gradient-to-r from-blue-100 to-blue-200',
-                    text: 'text-blue-600',
-                    badge: 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'
-                };
-            default:
-                return {
-                    bg: 'bg-gradient-to-r from-yellow-100 to-yellow-200',
-                    text: 'text-yellow-600',
-                    badge: 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800'
-                };
-        }
-    }
-    
-    function getStatusText(status) {
-        switch(status) {
-            case 'verified': return 'Terverifikasi';
-            case 'paid': return 'Sudah Bayar';
-            default: return 'Menunggu';
-        }
-    }
-    
-    function getStatusIcon(status) {
-        switch(status) {
-            case 'verified': return 'fas fa-check-circle';
-            case 'paid': return 'fas fa-money-bill-wave';
-            default: return 'fas fa-clock';
-        }
-    }
-    
-    // Modal control functions
-    function closeParticipantModal() {
-        document.getElementById('participantModal').classList.add('hidden');
-        document.getElementById('participantModal').classList.remove('flex');
-    }
-    
-    function closeVerificationModal() {
-        document.getElementById('verificationModal').classList.add('hidden');
-        document.getElementById('verificationModal').classList.remove('flex');
-        currentParticipantId = null;
-    }
-    
-    // Utility functions
-    function showLoading(message = 'Memuat...') {
-        // Implementasi loading sederhana
-        const loadingDiv = document.createElement('div');
-        loadingDiv.id = 'globalLoading';
-        loadingDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-        loadingDiv.innerHTML = `
-            <div class="bg-white p-6 rounded-lg shadow-xl">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p class="text-gray-700">${message}</p>
-            </div>
-        `;
-        document.body.appendChild(loadingDiv);
-    }
-    
-    function hideLoading() {
-        const loadingDiv = document.getElementById('globalLoading');
-        if (loadingDiv) {
-            loadingDiv.remove();
-        }
-    }
-    
-    function showToast(message, title = 'Sukses', type = 'success') {
-        // Implementasi toast sederhana
-        const toast = document.createElement('div');
-        toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform transition-transform duration-300 translate-y-0 ${
-            type === 'success' ? 'bg-green-500 text-white' : 
-            type === 'error' ? 'bg-red-500 text-white' : 
-            'bg-blue-500 text-white'
-        }`;
-        toast.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} mr-3"></i>
-                <div>
-                    <p class="font-semibold">${title}</p>
-                    <p>${message}</p>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.classList.add('translate-y-full');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+    function viewPendingPayments() {
+        window.location.href = '{{ route("admin.peserta.index") }}?status=pending';
     }
     
     // Close modals with Escape key
@@ -1429,7 +1187,6 @@
             closeParticipantModal();
             closeVerificationModal();
             closeExportModal();
-            closeExportSuccessModal();
         }
     });
     
@@ -1438,8 +1195,7 @@
         const modals = [
             'participantModal',
             'verificationModal',
-            'exportModal',
-            'exportSuccessModal'
+            'exportModal'
         ];
         
         modals.forEach(modalId => {
@@ -1448,7 +1204,6 @@
                 if (modalId === 'participantModal') closeParticipantModal();
                 if (modalId === 'verificationModal') closeVerificationModal();
                 if (modalId === 'exportModal') closeExportModal();
-                if (modalId === 'exportSuccessModal') closeExportSuccessModal();
             }
         });
     });
