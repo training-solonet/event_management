@@ -226,9 +226,6 @@
                                 <button data-id="{{ $participant->id }}" class="verify-btn px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow text-sm">
                                     <i class="fas fa-edit mr-1"></i> Verifikasi
                                 </button>
-                                {{-- <button data-id="{{ $participant->id }}" class="delete-btn px-3 py-1.5 bg-gradient-to-r from-red-100 to-red-200 text-red-700 rounded-lg hover:from-red-200 hover:to-red-300 transition-all duration-200 shadow-sm hover:shadow text-sm">
-                                    <i class="fas fa-trash mr-1"></i> Hapus
-                                </button> --}}
                             </div>
                         </td>
                     </tr>
@@ -555,7 +552,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // CSRF Token untuk AJAX
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    // const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     
     // Element references
     const participantModal = document.getElementById('participantModal');
@@ -1343,7 +1340,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     ${proofLink}
                 </div>
-                
                 
                 <div class="text-center pt-3 border-t border-gray-100">
                     <button onclick="viewParticipantDetail(${participant.id})" 

@@ -1,59 +1,184 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Event-Management
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Deskripsi Project
 
-## About Laravel
+Event Management adalah sebuah paltform yang dirancang untuk memudahkan baik user maupun admin dalam melakuka pendaftaran serta pengelolaan event, platform ini memberikan kemudahan akses dengan tampilan yang terbilang baik dan user frinedly, selain itu platform ini didesain sedemikian rupa untuk memudahkan pengelolaan event baik untuk skala kecil, menengah atau besar.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ERD Diagram
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Berikut adalah Entity Relationship Diagram (ERD) dari database POS Event-Management yang menunjukkan struktur dan relasi antar tabel:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+![ERD Diagram Event Management](docs/erd.png)
 
-## Learning Laravel
+# Event Management Database Documentation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Dokumentasi ini berisi penjelasan mengenai struktur database yang digunakan dalam sistem manajemen?pengelolaan event dan pendaftaran peserta.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Database Schema (ERD)
 
-## Laravel Sponsors
+Sistem menggunakan database relasional untuk mengelola pendaftaran, transaksi, dan operasional sistem secara otomatis.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 📂 Penjelasan Tabel
 
-## Contributing
+### 1. Modul Utama (Core)
+* **`events`**: Menyimpan detail acara.
+    * `event_code`: Kode unik identitas event.
+    * `available_slots` & `registered_count`: Untuk kontrol kuota peserta.
+* **`participants`**: Data pendaftar yang terhubung ke event.
+    * Menyimpan info personal (nama, email, phone, nik, gender).
+    * Tracking pembayaran (`payment_status`, `payment_proof`).
+    * Log notifikasi (`wa_notification_sent`, `email_notification_sent`).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 2. Autentikasi & Pengguna
+* **`users`**: Data admin/staf pengelola. Mendukung fitur keamanan seperti *Two-Factor Authentication* (2FA) dan role.
+* **`personal_access_tokens`**: Token untuk akses API (Laravel Sanctum).
+* **`password_reset_tokens`**: Penyimpanan token sementara untuk reset kata sandi.
 
-## Code of Conduct
+### 3. Infrastruktur & Pembayaran
+* **`payment_methods`**: Master data metode pembayaran (Nama bank, nomor rekening, status aktif).
+* **`sessions`**: Menyimpan data sesi login user untuk menjaga persistensi akun.
+* **`cache` & `cache_locks`**: Digunakan untuk mengoptimalkan kecepatan akses data dan penguncian proses sistem.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Queue & Log System (Antrean Kerja)
+* **`jobs` & `job_batches`**: Mengelola proses background seperti pengiriman email massal.
+* **`failed_jobs`**: Mencatat proses antrean yang gagal untuk keperluan debugging.
+* **`migrations`**: Rekam jejak perubahan struktur database (version control database).
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+##  Relasi Utama (Key Relationships)
 
-## License
+| Hubungan | Tabel Asal | Tabel Tujuan | Kunci (Foreign Key) |
+| :--- | :--- | :--- | :--- |
+| **One to Many** | `events` | `participants` | `event_id` |
+| **One to Many** | `users` | `sessions` | `user_id` |
+| **Polymorphic** | `users`/`others` | `personal_access_tokens` | `tokenable_id` |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+##  Atribut Penting (Business Logic)
+1.  **Pendaftaran**: Setiap peserta yang mendaftar ke tabel `participants` harus menyertakan `transaction_code` unik untuk verifikasi manual maupun otomatis.
+2.  **Keamanan**: Tabel `users` memiliki kolom `two_factor_secret`, menunjukkan sistem ini mengutamakan keamanan akun pengelola.
+3.  **Manajemen Kuota**: Kolom `available_slots` pada tabel `events` menjadi acuan validasi sebelum `participants` baru dapat ditambahkan.
+
+
+## Environment
+* **Framework Context**: Laravel 12.
+* **Engine**: MySQL / MariaDB / PostgreSQL.
+
+### Keunggulan Platform
+
+Event management memiliki fitur yang simple dan mudah di gunakan bahkan untuk pemula sekalipun selain itu platform ini juga memberikan visualisasi yang baik untuk setiap fiturnya, alih alih hanya mementingkan fitur dan fungsional, kami menggabungkan dua aspek penting dalam website yaitu visual dan fungsional dalam satu platform yaitu Event management.
+
+### Role dan Apa saja yang bisa di kerjakan
+
+- **Peserta**: Peserta adalah role paling umum yang akan di dapatakan ketika pertamakali masuk webiste ini, selain itu peserta juga diberikan beberapa fitur penunjang untuk mempermudah penggunaan website seperti search, daftar dan sebagainya.
+
+Path: "/"
+
+Kendali peserta meliputi: Melakukan pendaftaran event, melakukan search event, melakukan pencarian data pendaftaran berdasarkan kode transaksi.
+
+- **Admin**: Admin adalah role khusus yang memiliki wewenang khusus pula untuk melakukan pengelolaan event, selain itu admin juga memiliki halaman khusus yang memungkinkan admin melakuan pengelolaan event, peserta ataupun metode pembayaran. 
+
+Path: "/admin"
+
+Kendali Admin meliputi: Melakukan monitoring event, melakukan monitoring peserta dari tiap tiap event, melakukan penambahan atau penghapusan event, melakukan verifikasi peserta, mengirim email konfirmasi berisi kode QR, menambahkan, mengaktifkan/ menonaktifkan metode pembayaran.
+
+### Fitur Utama Peserta
+
+- **Pendaftaran event**: Memungkinkan peserta melakukan pendaftaran event yang sudah di sediakan
+- **Pencarian berdasarkan kode transaksi**: memungkinkan peserta melakukan pencarian berdasarkan kode transaksi
+- **Redirect Whatsapp**: Memungkinkan pendaftar mengirimkan informasi pendafatrannya kepada pihak penyelenggara
+
+### Fitur Utama Admin
+
+- **Monitoring Dashboard**: Memungkikan admin melakukan melakukan monitoring keseluruhan untuk event dan juga peserta.
+- **Management Event**: Memungkinkan admin melakukan pengelolaan seperti penambahan, pengeditan serta memonitoring peserta yang terdaftar di event ternetu.
+- **Management Peserta**: Memungkinkan admin melakukan pengelolan peserta yang sudah melakukan pendaftaran seperti melakukan verifikasi pembayaran, mengirimkan email konfirmasi serta melihat informasi pendafatran peserta.
+- **Fitur Mentode Pembayaran**: Memungkinkan admin melakukan pengelolaan metode pembayaran seperti menambahkan, menghapus atau menonaktifkan metode pembayaran.
+- **Kirim Email Konfirmasi**: Memungkinkan admin mengirimkan pesan email konfirmasi yang berisi informasi pendaftar serta kode QR untuk memverifikasi peserta.
+- **Export Data**: Export laporan dalam berbagai format (Excel, PDF)
+
+### Teknologi yang Digunakan
+
+- **Backend**: Laravel 12
+- **Frontend**: Livewire, Tailwind CSS, Vite, Axios, Font Awesome
+- **Database**: MySQL
+- **Export**: Maatwebsite Excel
+- **QR Code Generator**: Js QrCode
+- **Authentication**: Laravel Fortify & Jetstream
+
+## Instalasi
+
+### Prerequisites
+
+- PHP 8.2 atau lebih tinggi
+- Composer
+- Node.js & NPM
+- MySQL/PostgreSQL
+
+### Langkah Instalasi
+
+1. Clone repository
+```bash
+git clone https://github.com/training-solonet/pos-sanjaya.git
+cd pos-sanjaya
+```
+
+2. Install dependencies
+```bash
+composer install
+npm install
+```
+
+3. Setup environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. Konfigurasi database di file `.env`
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pos_sanjaya
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+5. Jalankan migrasi database
+```bash
+php artisan migrate
+```
+
+6. Build assets
+```bash
+npm run build
+# atau untuk development
+npm run dev
+```
+
+7. Jalankan aplikasi
+```bash
+php artisan serve
+```
+
+Aplikasi akan berjalan di `http://localhost:8000`
+
+## Development
+
+### Running Development Server
+```bash
+# Terminal 1 - Laravel
+php artisan serve
+
+# Terminal 2 - Vite
+npm run dev
+```
+
+### Code Quality
+```bash
+# Fix PHP code style
+./vendor/bin/pint
+

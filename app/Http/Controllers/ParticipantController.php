@@ -14,7 +14,7 @@ class ParticipantController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Participant::with('event')->latest();
+        $query = Participant::with('event');
         
         // Filter by payment status
         if ($request->has('payment_status') && $request->payment_status != '') {
@@ -45,6 +45,16 @@ class ParticipantController extends Controller
                   ->orWhere('transaction_code', 'like', "%$search%");
             });
         }
+        
+        // Urutkan berdasarkan status: pending -> paid -> verified, lalu terbaru
+        $query->orderByRaw("
+            CASE 
+                WHEN payment_status = 'pending' THEN 1
+                WHEN payment_status = 'paid' THEN 2
+                WHEN payment_status = 'verified' THEN 3
+                ELSE 4
+            END
+        ")->orderBy('created_at', 'desc');
         
         $participants = $query->paginate(20);
         $events = Event::all();
@@ -802,6 +812,4 @@ class ParticipantController extends Controller
             ]);
         }
     }
-
-    
 }

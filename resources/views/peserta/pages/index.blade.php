@@ -1008,10 +1008,10 @@
                                     <i class="fas fa-venus-mars text-secondary"></i>
                                 </div>
                                 <select name="gender" required 
-                                        class="w-full pl-12 pr-4 py-4 form-input rounded-xl focus:outline-none focus:ring-0 text-gray-800 dark:text-gray-200 appearance-none">
-                                    <option value="">-- Pilih Jenis Kelamin --</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
+                                        class="w-full pl-12 pr-4 py-4 form-input rounded-xl focus:outline-none focus:ring-0 text-gray-800 dark:text-gray-300 appearance-none">
+                                    <option value="" hide>-- Pilih Jenis Kelamin --</option>
+                                    <option class="text-gray-900" value="Laki-laki">Laki-laki</option>
+                                    <option class="text-gray-900" value="Perempuan">Perempuan</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                                     <i class="fas fa-chevron-down text-secondary"></i>
