@@ -103,7 +103,7 @@ Wewenang penuh untuk manajemen operasional sistem.
 1. Clone repository
 ```bash
 git clone https://github.com/training-solonet/event_management.git
-cd pos-sanjaya
+cd event_management
 ```
 
 2. Install dependencies
